@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧浇花系统</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .main-container {
+            display: grid;
+            grid-template-columns: 45% 55%;
+            gap: 20px;
+        }
+        
+        /* 左侧照片区域 */
+        .left-section {
+            padding: 20px;
+        }
+
+        .photo-container {
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        #plant-photo {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* 右侧控制区域 */
+        .right-section {
+            padding: 20px;
+        }
+        
+        .status-section, .control-section {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .status-item {
+            margin-bottom: 15px;
+        }
+        
+        .control-item {
+            margin-bottom: 20px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        input[type="number"] {
+            padding: 5px;
+            width: 60px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .status-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .status-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .status-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin: 10px 0;
+        }
+        
+        .status-label {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .status-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #4CAF50;
+        }
+        
+        /* 聊天界面样式 */
+        .chat-section {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background: #f9f9f9;
+        }
+        
+        .message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        
+        .user-message {
+            background: #4CAF50;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .bot-message {
+            background: #e9ecef;
+            color: #333;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .chat-input button {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .chat-input button:hover {
+            background: #45a049;
+        }
+        
+        .chat-input button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .photo-history {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            background: white;
+        }
+        
+        .history-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            background: #f9f9f9;
+            transition: transform 0.2s;
+        }
+        
+        .history-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .history-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .history-time {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        
+        .history-comment {
+            color: #333;
+            font-style: normal;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+        
+        .history-comment p {
+            margin: 5px 0;
+        }
+        
+        .history-comment strong {
+            color: #4CAF50;
+        }
+        
+        .history-container {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        /* 美化滚动条 */
+        .history-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .history-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        .history-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <h1>智慧浇花系统</h1>
+    
+    <div class="main-container">
+        <!-- 左侧：照片区域 -->
+        <div class="left-section">
+            <!-- 当前照片区域 -->
+            <div class="photo-container">
+                <h2>最新照片</h2>
+                <div class="photo-container">
+                    <img id="plant-photo" src="/static/flower.jpg" alt="植物照片">
+                </div>
+                <div style="text-align: center; margin-top: 15px;">
+                    <button id="photo-button" onclick="takePhoto()">拍照</button>
+                </div>
+            </div>
+            
+            <!-- 历史记录区域 -->
+            <div class="photo-history">
+                <h2>历史记录</h2>
+                <div class="history-container" id="photo-history">
+                    <!-- 历史记录将在这里动态添加 -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- 右侧：状态和控制区域 -->
+        <div class="right-section">
+            <!-- 状态区域 -->
+            <div class="status-section">
+                <h2>设备状态</h2>
+                <div class="status-cards">
+                    <!-- <div class="status-card">
+                        <div class="status-icon">💡</div>
+                        <div class="status-label">补光灯</div>
+                        <div class="status-value" id="soil-moisture">已关闭</div>
+                    </div> -->
+
+                    <!-- 水泵状态卡片 -->
+                    <div class="status-card">
+                        <div class="status-icon">💧</div>
+                        <div class="status-label">水泵状态</div>
+                        <div class="status-value" id="pump-status">加载中...</div>
+                    </div>
+                    
+                    <!-- 土壤湿度卡片 -->
+                    <div class="status-card">
+                        <div class="status-icon">🌱</div>
+                        <div class="status-label">土壤湿度</div>
+                        <div class="status-value" id="soil-moisture">加载中...</div>
+                    </div>
+
+                    
+                </div>
+            </div>
+            
+            <!-- 控制区域 -->
+            <div class="control-section">
+                <h2>控制面板</h2>
+                <div class="control-item">
+                    <h3>浇水控制</h3>
+                    <input type="number" 
+                           id="water-duration" 
+                           min="1" 
+                           max="10" 
+                           value="1" 
+                           style="width: 60px;">
+                    <span>秒</span>
+                    <button id="water-button" onclick="startWatering()">开始浇水</button>
+                </div>
+            </div>
+            
+            <!-- 聊天区域 -->
+            <div class="chat-section">
+                <h2>智能助手</h2>
+                <div class="chat-messages" id="chat-messages">
+                    <!-- 消息会在这里动态添加 -->
+                    <div class="message bot-message">
+                        你好！我是你的智能助手，有什么可以帮你的吗？
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" 
+                           id="chat-input" 
+                           placeholder="输入你的问题..."
+                           onkeypress="handleKeyPress(event)">
+                    <button onclick="sendMessage()" id="send-button">发送</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 定期更新设备状态
+        function updateDeviceStatus() {
+            console.log('开始获取设备状态...');
+            fetch('/get-device-shadow')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('收到的数据:', data);
+                    if (data.success && data.data.shadow && 
+                        data.data.shadow[0].reported.properties) {
+                        
+                        const properties = data.data.shadow[0].reported.properties;
+                        console.log('设备属性:', properties);
+                        
+                        // 更新水泵状态
+                        const pumpStatus = properties.pump ? "正在浇水" : "已关闭";
+                        const pumpElement = document.getElementById('pump-status');
+                        console.log('水泵状态:', pumpStatus);
+                        pumpElement.textContent = pumpStatus;
+                        pumpElement.style.color = properties.pump ? '#ff4444' : '#4CAF50';
+                        
+                        // 更新土壤湿度
+                        const soilMoisture = Math.round(properties.soil);
+                        const soilElement = document.getElementById('soil-moisture');
+                        console.log('土壤湿度:', soilMoisture);
+                        soilElement.textContent = `${soilMoisture}%`;
+                        
+                        // 根据湿度值改变颜色
+                        if (soilMoisture >= 70) {
+                            soilElement.style.color = '#4CAF50';
+                        } else if (soilMoisture >= 30) {
+                            soilElement.style.color = '#ffa726';
+                        } else {
+                            soilElement.style.color = '#ff4444';
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('获取设备状态失败:', error);
+                    document.getElementById('pump-status').textContent = '获取失败';
+                    document.getElementById('soil-moisture').textContent = '获取失败';
+                });
+        }
+
+        // 控制浇水
+        function startWatering() {
+            const duration = parseInt(document.getElementById('water-duration').value);
+            const waterButton = document.getElementById('water-button');
+            
+            // 验输入
+            if (isNaN(duration) || duration < 1 || duration > 10) {
+                alert('请输入1-10秒之间的浇水时间！');
+                return;
+            }
+            
+            // 禁用按钮防止重复点击
+            waterButton.disabled = true;
+            waterButton.textContent = '浇水中...';
+            
+            fetch('/control-pump', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ duration: duration })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`开始浇水 ${duration} 秒`);
+                    // 等待浇水完成后更新状态
+                    setTimeout(() => {
+                        updateDeviceStatus();
+                        waterButton.disabled = false;
+                        waterButton.textContent = '开始浇水';
+                    }, duration * 1000 + 1000); // 多等待1秒确保状态更新
+                } else {
+                    alert('浇水失败: ' + data.error);
+                    waterButton.disabled = false;
+                    waterButton.textContent = '开始浇水';
+                }
+            })
+            .catch(error => {
+                alert('操作失败: ' + error);
+                waterButton.disabled = false;
+                waterButton.textContent = '开始浇水';
+            });
+        }
+
+        // 控制相机拍照
+        function takePhoto() {
+            const photoButton = document.getElementById('photo-button');
+            photoButton.disabled = true;
+            photoButton.textContent = '拍照中...';
+            
+            fetch('/take-photo')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // 等待3秒让设备有时间拍照和上传
+                        setTimeout(() => {
+                            const newPhotoUrl = `/static/flower.jpg?t=${new Date().getTime()}`;
+                            // 更新当前照片
+                            document.getElementById('plant-photo').src = newPhotoUrl;
+                            
+                            // 请求AI评论
+                            return fetch('/analyze-photo', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ photoUrl: newPhotoUrl })
+                            });
+                        }, 3000);
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // 添加到历史记录
+                        addPhotoHistory(
+                            `/static/flower.jpg?t=${new Date().getTime()}`,
+                            data.comment,
+                            new Date().getTime()
+                        );
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('拍照或分析过程出错：' + error);
+                })
+                .finally(() => {
+                    photoButton.disabled = false;
+                    photoButton.textContent = '拍照';
+                });
+        }
+
+        // 确保页面加载完成后立即执行一次
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('页面加载完成，开始更新状态');
+            updateDeviceStatus();
+            setInterval(updateDeviceStatus, 1000);
+
+            // 初始化聊天历史
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.innerHTML = ''; // 清空现有消息
+
+            // 添加历史对话
+            const chatHistory = [
+                { text: '帮我浇水3秒吧', type: 'user' },
+                { text: '成功执行命令：浇水 3 秒', type: 'bot' },
+                { text: '拍张照', type: 'user' },
+                { text: '成功执行命令：拍照', type: 'bot' },
+                { text: '乱说一句话', type: 'user' },
+                { text: '抱歉，当前硬件没有配置这个任务！', type: 'bot' }
+            ];
+
+            // 添加所有历史消息
+            chatHistory.forEach(msg => {
+                addMessage(msg.text, msg.type);
+            });
+        });
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // 禁用输入和按钮
+            input.disabled = true;
+            document.getElementById('send-button').disabled = true;
+            
+            // 添加用户消息
+            addMessage(message, 'user');
+            
+            // 清空输入
+            input.value = '';
+            
+            // 发送到后端
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // 添加机器人回复
+                    addMessage(data.response, 'bot');
+                } else {
+                    addMessage('抱歉，我遇到了一些问题：' + data.error, 'bot');
+                }
+            })
+            .catch(error => {
+                addMessage('抱歉，发生了错误：' + error, 'bot');
+            })
+            .finally(() => {
+                // 重新启用输入和按钮
+                input.disabled = false;
+                document.getElementById('send-button').disabled = false;
+                input.focus();
+            });
+        }
+        
+        function addMessage(text, type) {
+            const messagesDiv = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            messageDiv.textContent = text;
+            messagesDiv.appendChild(messageDiv);
+            
+            // 滚动到底部
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // 添加新的历史记录
+        function addPhotoHistory(imageUrl, comment, timestamp) {
+            const historyContainer = document.getElementById('photo-history');
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            
+            const date = new Date(timestamp);
+            const formattedTime = date.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            // 创建一个专门的div来放置markdown内容
+            const commentDiv = document.createElement('div');
+            commentDiv.className = 'history-comment';
+            // 使用innerHTML来设置解析后的markdown内容
+            commentDiv.innerHTML = marked.parse(comment);
+            
+            historyItem.innerHTML = `
+                <div class="history-time">${formattedTime}</div>
+                <img src="${imageUrl}" alt="历史照片" class="history-image">
+            `;
+            
+            // 将解析后的markdown内容添加到历史记录项
+            historyItem.appendChild(commentDiv);
+            
+            historyContainer.insertBefore(historyItem, historyContainer.firstChild);
+        }
+
+        // 页面加载时添加一些测试数据
+        document.addEventListener('DOMContentLoaded', () => {
+            // 添加示例历史记录
+            addPhotoHistory(
+                '/static/flower.jpg',
+                '**日期**：2024/12/31 \n\n\
+**天气**：晴朗\n\n\
+**土壤湿度**：100%\n\n\
+**花卉状态**：图中的花卉呈现出枯萎的状态，花瓣干枯发皱且颜色暗沉，花朵整体已失去了生机。\n\n\
+**分析与展望**：虽然天气晴朗，但土壤湿度达到了100%，这可能导致土壤积水，使花卉根部缺氧，进而影响其正常生长。目前花卉已处于枯萎状态，若土壤湿度持续过高，可能会加重花卉的枯萎程度，甚至导致根部腐烂。未来需要适当降低土壤湿度，保持土壤的透气性，以利于花卉恢复生机。',
+                new Date().getTime() - 86400000 // 昨天
+            );
+            // addPhotoHistory(
+            //     '/static/flower.jpg',
+            //     '观察到新的花苞，记得适当浇水',
+            //     new Date().getTime() - 172800000 // 前天
+            // );
+        });
+    </script>
+</body>
+</html> 
